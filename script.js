@@ -826,7 +826,7 @@ function createForm() {
 }
 
 function addUserPrompt() {
-  const newName = prompt("Enter the name of the new rater:");
+  const newName = prompt("Enter the name of the new user:");
   
   // 1. If they cancel or leave it blank, do nothing
   if (!newName) return;
