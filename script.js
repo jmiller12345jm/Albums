@@ -827,22 +827,35 @@ function createForm() {
 
 function addUserPrompt() {
   const newName = prompt("Enter the name of the new rater:");
+  
+  // 1. If they cancel or leave it blank, do nothing
   if (!newName) return;
+
+  // 2. Show the loader immediately
+  const loader = document.getElementById('loadingOverlay');
+  if (loader) loader.style.display = 'flex';
 
   const url = `${baseScriptURL}?action=addUserGlobal&name=${encodeURIComponent(newName)}`;
 
-  // Use 'no-cors' mode to prevent the redirect error, 
-  // OR just handle the response more gracefully.
   fetch(url, { mode: 'no-cors' }) 
   .then(() => {
-    alert("User added! Updating data...");
-    // Instead of location.reload(), just re-run your init logic
+    // 3. Instead of an alert (which pauses the code), 
+    // we keep the loader visible while init() fetches the fresh data.
+    console.log("User added, refreshing data...");
+    
+    // We pass a callback to init if possible, or just chain the hide logic
     init(); 
+
+    // 4. Give the UI a moment to catch up, then hide loader
+    setTimeout(() => {
+        if (loader) loader.style.display = 'none';
+    }, 1500);
   })
-    .catch(err => {
-      console.error("Actual error:", err);
-      alert("The request failed to send.");
-    });
+  .catch(err => {
+    console.error("Actual error:", err);
+    if (loader) loader.style.display = 'none';
+    alert("The request failed to send.");
+  });
 }
 
 function initScrollObserver() {
