@@ -13,7 +13,15 @@ body {
 .form-overlay[style*="display: flex"] {
   pointer-events: auto;
 }
+input::-webkit-calendar-picker-indicator {
+    display: none !important;
+    -webkit-appearance: none;
+}
 
+/* Removes the arrow/extra space in Firefox */
+input {
+    -moz-appearance: textfield;
+}
 
 
 .truetopofscreen {
