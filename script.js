@@ -443,7 +443,7 @@ function renderCards(data) {
     let allScores = [];
 
     // 2. DATA PROCESSING (Calculations & Stats)
-    let processedData = data.map((item, index) => {
+    processedData = data.map((item, index) => {
         const ratings = ratingKeys.map(key => {
             let val = Number(item[key]) || 0;
             if (val > 0) {
@@ -547,7 +547,7 @@ function renderCards(data) {
                 <div class="graphandupdate">
                 <button class="comments" onclick="addcomment(${item.originalRow})">${item.Comment || "..."}</button>
                 
-                    <div class="distribution-container" onclick="showScoreList(${index})" style="cursor: pointer;">
+                    <div class="distribution-container" onclick="showScoreList(${index}, event)" style="cursor: pointer;">
                         <svg viewBox="0 0 ${graphWidth} ${graphHeight}" preserveAspectRatio="none" class="dist-svg">
                             <defs><linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%">${stops}</linearGradient></defs>
                             <path d="${smoothPathData}" class="dist-path" style="stroke: url(#${gradId}); fill: url(#${gradId});"></path>
@@ -1030,10 +1030,10 @@ function showScoreList(cardIndex) {
     // 3. Render Modal
     const overlay = document.createElement('div');
     overlay.className = 'score-list-overlay';
-    overlay.style.zIndex = "10000";
+    overlay.style.zIndex = "20000";
     
-    overlay.innerHTML = `
-        <div class="score-list-modal">
+   overlay.innerHTML = `
+        <div class="score-list-modal" onclick="event.stopPropagation()">
             <button class="close-score-list" onclick="this.closest('.score-list-overlay').remove()">×</button>
             <div class="modal-header">
                 <h3 style="margin:0; color:#ffffff; text-align:center">${item.Album}</h3>
@@ -1044,7 +1044,7 @@ function showScoreList(cardIndex) {
             </div>
         </div>
     `;
-
+if (window.event) window.event.stopPropagation();
     document.body.appendChild(overlay);
 
     // 4. Search & Focus Logic
@@ -1184,31 +1184,25 @@ function closeAllPopups() {
 
 // Universal listener for clicking off a popup
 window.addEventListener('click', (e) => {
-    // List of all your overlay classes/IDs
     const overlayClasses = ['form-overlay', 'score-list-overlay'];
     const overlayIDs = ['ratingModal', 'formOverlay'];
 
-    // Check if what we clicked is one of the backgrounds
     const isOverlayClass = overlayClasses.some(cls => e.target.classList.contains(cls));
     const isOverlayID = overlayIDs.includes(e.target.id);
 
     if (isOverlayClass || isOverlayID) {
-        // 1. Close the static modals
-        closeRatingModal(); 
+        // 1. Close static modals by display
+        const ratingModal = document.getElementById('ratingModal');
+        if (ratingModal) ratingModal.style.display = 'none';
         
-        // 2. Close the dynamic "Add Album" form
         const formOverlay = document.getElementById('formOverlay');
-        if (formOverlay) {
-            formOverlay.style.display = 'none';
-        }
+        if (formOverlay) formOverlay.style.display = 'none';
 
-        // 3. Close the "Score List" popup (it gets removed from DOM)
+        // 2. Remove dynamic score list from DOM
         const scoreList = document.querySelector('.score-list-overlay');
-        if (scoreList) {
-            scoreList.remove();
-        }
-
-        // 4. Reset scroll lock
+        if (scoreList) scoreList.remove();
+        
+        // 3. Reset UI state
         document.body.style.overflow = 'auto';
         document.body.classList.remove('modal-open');
     }
