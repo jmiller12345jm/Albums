@@ -1,0 +1,1884 @@
+
+body {
+  background:#080808;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  color: white;
+  overflow-y: auto !important;
+  height: auto;
+}
+
+/* When the JS changes display to flex, we enable clicks */
+.form-overlay[style*="display: flex"] {
+  pointer-events: auto;
+}
+
+
+
+.truetopofscreen {
+   position: fixed;
+  top: 0;
+  left: 0;
+  display:flex;
+flex-direction:row;
+  justify-content:space-between;
+ width: 100%;
+  background: #080808;
+  z-index: 1000;
+  height:60pt;
+  padding: 0px 20pt 0pt 20pt;
+  border-bottom: 0px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none !important;
+}
+
+/* 2. THE STICKY HEADER (Title, Nav, and Filters stay at the top) */
+.topofscreen {
+  margin-top:5pt;
+  display:flex;
+  flex-direction:column;
+  background:transparent;
+ 
+}
+
+.newusersubmitbtn {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    text-align: center;
+    gap: 13pt;
+    margin-top: 6pt;
+    margin-bottom: 10pt;
+    margin-right: ;
+    min-width: 120pt;
+}
+
+
+.display-section {
+  margin-top: 60pt; 
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background:#080808
+}
+
+/* The animation definition */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Class to trigger the animation */
+.card-fade-in {
+    animation: fadeInUp 0.4s ease forwards;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+}
+
+/* The actual rotating circle */
+.loading-circle {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.1); /* Faint track */
+  border-top: 5px solid #ffffff; /* The visible moving part */
+  border-radius: 80%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3)
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.wave-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    height: 100px; /* Adjust based on where you want it sitting */
+    width: 100%;
+}
+
+.wave-loader span {
+    width: 12px;
+    height: 12px;
+    background-color: #ffffff; /* Your purple */
+    border-radius: 50%;
+    display: inline-block;
+    animation: wave-dots 1.2s infinite ease-in-out;
+}
+
+/* Staggering the dots to create the wave */
+.wave-loader span:nth-child(2) { animation-delay: 0.1s; }
+.wave-loader span:nth-child(3) { animation-delay: 0.2s; }
+.wave-loader span:nth-child(4) { animation-delay: 0.3s; }
+.wave-loader span:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave-dots {
+    0%, 40%, 100% {
+        transform: translateY(0);
+        opacity: 0.3;
+    }
+    20% {
+        transform: translateY(-15px); /* How high the wave jumps */
+        opacity: 1;
+    }
+}
+
+
+.toggle {
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 15px;
+  border: 1px solid #333;
+  width: 60%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.close-popup {
+  position: absolute;
+  top: 10px; right: 15px;
+  background: none; border: none;
+  color: white; font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.popup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items:center
+}
+
+/* Adjust your inputs to be full width inside the popup */
+.popup-form input, .popup-form select {
+  padding: 12px;
+  background: #222;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 20px;
+  width:80%;
+  text-align:center
+}
+
+.popup-form select {appearance:none;
+color:#666;
+cursor:pointer;}
+
+.popup-form select:hover {border:1px solid #fff }
+
+.popup-form input:hover {border:1px solid #fff }
+
+.form-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Ensure it catches clicks when display: flex */
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.formcardbtn {
+  display:flex;
+  font-size:18px;
+  letter-spacing:2px;
+  color:#666;
+  background:transparent;
+  border:transparent;
+  border-radius:20px;
+  overflow:none;
+  text-align:right;
+  width:auto;
+  height:auto;
+  cursor:pointer;
+  transition:1s;
+  text-transform:uppercase;
+  margin-top:0pt;
+  padding-right:50px;
+}
+
+.newuserbtn {
+
+  display:flex;
+  font-size:18px;
+  letter-spacing:2px;
+  color:#666;
+  background:transparent;
+  border:transparent;
+  border-radius:20px;
+  overflow:none;
+  text-align:right;
+  width:auto;
+  height:auto;
+  cursor:pointer;
+  transition:1s;
+  text-transform:uppercase;
+  margin-top:0pt;
+  padding-right:50px;
+}
+
+.newuserbtn:hover {color:#ffffff;
+  transform: translateY(-1px);
+  border:2px #666;
+  text-shadow: 0 0 20px gold;
+}
+
+.formcardbtn:hover {color:#ffffff;
+  transform: translateY(-1px);
+  border:2px #666;
+  text-shadow: 0 0 20px gold;
+}
+
+.titleyearsform {
+  display:flex;
+flex-direction: row;
+align-items:center;
+gap:0pt;
+}
+
+
+
+.titleyears {
+  flex:1;
+  display:flex;
+flex-direction: row;
+  padding:0pt;
+gap:10pt;
+align-items:left;}
+
+
+h1 {
+  padding: 0pt 0pt;
+  margin-left:5pt;
+  font-size: 30px;
+  text-transform: uppercase;
+  font-weight:1;
+  color: #ffffff;
+  letter-spacing: 2px;
+  transition: all 1s;
+  cursor: default;
+  line-height:0pt;
+  text-shadow: 0 0 10px gold
+}
+
+
+
+
+.page-nav {
+  gap:10pt;
+}
+
+.nav-btn {
+  margin-top:4pt;
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 25px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.nav-btn:hover {color:#ffffff;
+
+}
+
+
+
+.form-section {
+  flex:1;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  margin-right:5pt;
+  background:transparent;
+  padding: 1px;
+  border-radius: 15px;
+  height: auto; 
+  width:auto;/* Let it fit the form */
+}
+
+.horizontal-form {
+transform: translateY(-15px);
+  display:flex;
+  margin-top:0pt;
+flex-direction:row;
+padding:10pt;
+gap:1pt;
+background:rgba(20, 20, 20, 0.8);
+  width:300pt;
+border-radius:10pt;
+}
+
+.horizontal-form input[type="text"] {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #666;
+  padding: 10px;
+  border-radius: 6px;
+  align-items: center;
+  text-align:center;
+  width:100%;
+}
+
+.horizontal-form select {
+  width:70%;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #666;
+  padding: 10px;
+  border-radius: 6px;
+   appearance: none;
+  align-items: center;
+  text-align:center;
+}
+
+.horizontal-form select:hover {color:#ffffff} 
+
+/* The Submit Button on the right */
+#submitBtn {
+  width:50%;
+  background: transparent; /* Your vibrant green */
+  color: #666;
+  font-weight: bold;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+
+#submitBtn:hover {
+  color:#ffffff;
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+
+.refsortact {
+  display:flex;
+  flex-direction:row;
+ }
+
+
+.statsandsearch {display:flex;
+flex-direction:row;
+  justify-content:space-between;
+  max-width:1200px;
+  width:90%;
+align-items:center;
+}
+
+.activity-btn {
+
+  display:flex;
+  font-weight:10;
+  font-size:18px;
+  letter-spacing:1px;
+  color:#666;
+  background:#1a1a1a;
+  border:1pt solid #333;
+  border-radius:20px;
+  overflow:none;
+  text-align:right;
+  cursor:pointer;
+  transition:1s;
+  text-transform:uppercase;
+  margin-top:0pt;
+ }
+
+.activity-btn:hover {color:#ffffff;
+  transform: translateY(-1px);
+  border:2px #666;
+  text-shadow: 0 0 20px gold;
+  border:1pt solid gold;
+}
+
+.sortrefresh {
+  gap:10pt;
+  margin-bottom:0pt;
+  display:flex;
+  flex-direction:row;
+}
+
+
+.filter-controls {
+  padding:10pt 0pt 5pt 0pt;
+  background:transparent;
+  display: flex;
+  flex-direction:row;
+  gap: 2px;
+  align-items: center;
+}
+
+.filter-label {
+  min-width:;
+  color: #666;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.sort-dropdown {
+  background: transparent;
+  color: #666;
+  border: none;
+  font-size: 11px;
+  letter-spacing:2px;
+  border-radius:20pt;
+  cursor: pointer;
+  text-transform: uppercase;
+  outline: none;
+  appearance:none;
+  width:auto;
+  max-width:70pt;
+  transition:1s;
+}
+
+.sort-dropdown option {
+  background-color: #1a1a1a; /* Dark background to match your site */
+  color: #666;               /* Gray text */
+  padding: 10px;
+  border-radius:10pt;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  border: none;
+  text-shadow: 0 0 10px gold
+}
+
+.sort-dropdown option:hover {background-color:#fff}
+
+.sort-dropdown:hover {color:#ffffff;
+text-shadow: 0 0 10px gold}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.glow-text-btn {
+
+  margin-top:5pt;
+  align-items:center;
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 1s;
+  text-align:center;
+}
+
+
+.glow-text-btn:hover {color:#ffffff;
+text-shadow: 0 0 10px gold;}
+.glow-text-btn.active {color:#ffffff}
+
+.active-glow {
+  color: #fff !important;
+  text-shadow: 0 0 10px gold;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+/* 3. NAVIGATION (Years) */
+.stats-popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #111;
+    text-align: center;
+    /* REDUCE PADDING: from 40px to 20px */
+    padding: 20px; 
+    border-radius: 20px;
+    width: 90%;
+    max-width: 900px;
+    /* ADD MAX-HEIGHT: keeps it from leaving the screen */
+    max-height: 85vh; 
+    overflow-y: auto; 
+}
+
+.stats-popup-content::-webkit-scrollbar {
+  height: 0px;
+}
+
+.stats-popup-content::-webkit-scrollbar-thumb {
+ background: transparent;
+  border-radius: 10px;
+}
+
+/* Adjust the existing aveCard slightly for the grid layout */
+.aveCard {
+  margin: 0 !important;
+  width: auto !important;
+}
+#averagesforall {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 3%;
+  width: 80%;
+  margin: 0 auto; /* Centers the container itself */
+  padding: 15px 5px;
+  
+  /* THIS CENTERS THE CARDS INSIDE */
+  justify-content: safe center; 
+  
+  /* Hide scrollbars but keep functionality */
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+}
+#averagesforall::-webkit-scrollbar {
+  height: 0px;
+}
+#averagesforall::-webkit-scrollbar-thumb {
+ background: transparent;
+  border-radius: 10px;
+}
+
+
+.scroller-window {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-arrow {
+  position: absolute;
+  background: transparent;
+  border:none;
+  color: #666;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.scroll-arrow:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+  text-shadow: 0 0 10px gold;
+}
+
+.scroll-arrow.left { left: 5%; }
+.scroll-arrow.right { right: 5%; }
+
+
+.searchuseraves {background: #222; border: 1px solid #444; color: white; border-radius: 10px; padding: 4px 10px; font-size: 12px;text-align:center; 
+transition:1s}
+
+.searchuseraves:hover {
+  cursor:pointer;
+  border:  1px solid #ffffff;
+
+}
+
+/* This targets the new member icon specifically */
+img[src*="1077063"], img[src*="1144838"], img[src*="1946429"] {
+  filter: brightness(0) invert(1); /* Forces it to pure white */
+  background: transparent !important; /* Removes any background */
+  border: none !important; /* Removes any border */
+  box-shadow: none !important; /* Removes any shadows */
+  padding: 0;
+  opacity: 0.9;
+}
+.recent-activity-title {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0 10px 0;
+    color: #ffffff;
+    text-shadow: 0 0 10px gold;
+}
+
+.recent-updates-list {
+    width: 100%;
+    max-width: 700px;
+    margin: 10px auto; /* Reduced margin */
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 10px 20px; /* Thinner vertical padding */
+    border-radius: 16px;
+    border: 1px solid #222;
+    box-sizing: border-box;
+    
+    /* SCROLLING LOGIC: Limits the activity part specifically */
+    max-height: 300px; 
+    overflow-y: auto;
+}
+
+
+.recent-updates-list::-webkit-scrollbar {
+  height: 0px;
+}
+.recent-updates-list::-webkit-scrollbar-thumb {
+ background: transparent;
+  border-radius: 10px;
+}
+
+.update-row {
+  gap: 20px;
+display: flex;
+    align-items: center;
+          
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%;
+}
+
+
+.update-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.mini-art {
+    width: 55px;
+    height: 55px;
+    border-radius: 4px;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.update-info {
+flex: 1;                /* This pushes the text to take up all remaining space */
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.update-title {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.update-subtitle {
+    color: #888;
+    font-size: 11px;
+}
+
+
+
+.aveCard {
+  padding: 8px 8px 0px 8px;
+  border-radius: 20px;
+  text-align: center;
+  min-width: 50pt;
+  min-height:50pt;
+    transition:0.5s;
+}
+.aveNamesL {margin:0; font-size:12px; opacity:0.8;}
+.aveNamesS{ display:none}
+.aveScores {margin:0; font-size:20px; font-weight:bold}
+.aveCount {margin:0; font-size:10px; font-weight:bold}
+
+.aveCard:hover {transform: translateY(-5px);
+  box-shadow: 0px 0px 10px gold}
+
+
+
+
+
+
+
+
+.search-container {
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+}
+
+#albumSearch {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #333;
+    padding: 10px 20px;
+    border-radius: 25px;
+    width: 100%;
+    max-width: 400px;
+    outline: none;
+  text-align:center;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#albumSearch:focus {
+    border-color: #ffffff; 
+    box-shadow: 0 0 8px gold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#cardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 20px; /* This margin clears the fixed header */
+  width: 100%;
+  align-items: center;
+  padding-bottom: 20px;
+   box-sizing: border-box;
+}
+
+.card {
+  overflow: hidden;
+  position: relative;
+  background: #0F0F0F;
+  border-radius: 40px;
+  padding: 20px;
+  
+  transition: transform 1s ease, box-shadow 1s;
+  display: flex;
+  flex-direction: column;
+  margin-bottom:10px;
+  box-sizing: border-box;
+  gap:10px;
+ width: 95%;            /* Use percentage so it shrinks on small screens */
+  max-width: 1200px;     /* Prevents it from getting too wide on huge monitors */
+  box-sizing: border-box; /* Ensures padding doesn't push it off-screen */
+  height: auto;          /* Let height adjust to content */
+  min-height: 160pt;
+  margin-left: auto;     /* These two lines are the "ultimate" centering backup */
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.hover-glow-backdrop {
+  position: absolute;
+  top: -50px; left: -50px; right: -50px; bottom: -50px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.8); /* Turns the image into a colorful blob */
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.4s ease;
+  z-index: -1; /* Behind everything */
+  pointer-events: none; /* So it doesn't interfere with clicking buttons */
+  border-radius: 50%;
+}
+
+
+.card.is-centered .hover-glow-backdrop {
+ opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.card.is-centered {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.5); /* Semi-white border works with any color */
+}
+
+/* STEP 1: When centered, everything turns clean White (No Glow) */
+.card.is-centered .metaname,
+.card.is-centered .save-card-btn,
+.card.is-centered .comments,
+.card.is-centered .edit-releaseDate-btn,
+.card.is-centered .edit-art-btn,
+.card.is-centered .releaseDate,
+.card.is-centered .open-rate-btn,
+.card.is-centered h3,
+.card.is-centered h4 {
+  color: #ffffff !important;
+  text-shadow: none !important; /* Forces the gold glow OFF */
+  transition: all 1s ease;
+}
+
+/* STEP 2: Only when HOVERING specifically on a label, it turns Gold */
+.card.is-centered .metaname:hover,
+.card.is-centered .save-card-btn:hover,
+.card.is-centered .comments:hover,
+.card.is-centered .edit-releaseDate-btn:hover,
+.card.is-centered .edit-art-btn:hover,
+.card.is-centered .releaseDate:hover,
+.card.is-centered .open-rate-btn:hover,
+.card.is-centered h3:hover,
+.card.is-centered h4:hover {
+  cursor:pointer;
+  color: #ffffff !important;
+  text-shadow: 0 0 4px gold !important;
+ 
+}
+.card-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ... (Keep your bar-chart, ave, and titles CSS as they were) ... */
+.titles {
+  flex: 1;               /* Takes up available space */
+  text-align: center;
+  margin-left:30pt;
+  min-width: 250px;
+  display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;    /* Centers items horizontally */
+    justify-content: center !important; /* Centers items vertically */
+    text-align: center !important;      /* Centers the text lines */
+}
+
+.comments {
+   background:transparent;
+  border:none;
+  font-size:10pt;
+  margin-top:0pt;
+  color:#666;
+   letter-spacing: 1px;
+  transition:0.5s;
+  cursor:pointer;
+}
+
+.comments:hover{color:gold}
+
+
+
+
+.card-content {
+  display: flex;
+  flex-direction: row;   /* Keeps Art, Titles, and Chart in a line */
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+
+
+.titles h3, .titles h4 {
+  margin: 10pt;
+  width: 100%;            /* Ensures text-align has a full row to work with */
+  overflow: hidden;       /* white-space: normal;    /* Allows text to wrap to the next line */
+  text-overflow: clip;    /* Removes the "..." */
+  display: -webkit-box;   /* Enables line-clamping */
+  -webkit-line-clamp: 2;  /* Limits text to exactly 2 lines */
+  -webkit-box-orient: vertical;
+   letter-spacing: 1px;
+}
+.card img {
+  flex:1;
+  width: 180px;
+  height: 180px;
+  border-radius: 20px;
+  object-fit: cover;
+  flex-shrink: 0;        /* Prevents the image from getting squashed */
+  margin-left:;
+}
+
+.card img.loaded {
+  opacity: 1;
+}
+
+.releaseDate {color:#666;font-size: 12px;
+  text-transform: uppercase;
+  transition: 0.5s;
+   letter-spacing: 1px;
+}
+.releaseDate:hover {color:#ffffff}
+
+
+.edit-releaseDate-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: color 0.5s;
+}
+
+.edit-releaseDate-btn:hover {
+  color: #ffffff; /* Glows green on hover */
+}
+.ave {flex:1;
+  width: 70px;
+  height: 70px;
+  border-radius: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  border: 0px solid gold;
+  background: #444;
+margin-right:10pt;}
+
+
+
+
+
+.metaname {
+  background: transparent;
+  padding:1pt;
+  border: none;
+  border-radius:2pt;
+  color:#666 ;
+  font-size: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: color 0.2s;
+}
+.metaname:hover {color:#ffffff}
+
+.chartupdate {
+display: flex;
+  flex-direction: column; 
+  align-items: center;    /* This is the magic for horizontal centering */
+  justify-content: center;
+  gap: 0px;              
+  flex: 1;                
+  width: 100%;
+  margin-top:40pt;
+}
+
+.save-card-btn {
+ position: static !important; /* Forces it to follow the flexbox center rule */
+  margin: 10px auto !important; 
+  width: 100px;           /* Increased width to fit the text better */
+  height: auto;           /* Let it breathe */
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.save-card-btn:hover { color: #ffffff; 
+  opacity: 0.9;
+}
+
+
+
+.save-card-btn:disabled {
+  background: #ffffff !important;
+  cursor: not-allowed;
+}
+
+@keyframes neon-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+}
+
+
+
+.submission-container {
+  display: flex;
+  flex-direction: column;
+  text-align:center;
+  align-items: center;
+  gap: 40px;
+  padding: 15px;
+  background: transparent;
+  border-radius: 12px;
+  /* Adjust width/position so it sits next to the art or over it */
+  width: 180pt; 
+  margin-bottom:10pt;
+ 
+}
+.user-select-dropdown option {
+  text-align: center;
+  background-color: #1a1a1a;
+  color: #666;
+}
+
+.card.is-centered .user-select-dropdown {
+  color: #ffffff !important;}
+
+
+.modern-slider.album-slider {
+  -webkit-appearance: none; /* This "unlocks" the ability to style it */
+  appearance: none;
+  width: 250px; 
+  height: 20px;
+  background: #222; 
+  outline: none;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid #444;
+
+}
+.user-select-dropdown {
+  text-align: center;
+  text-align-last: center; /* This centers the text in the collapsed box */
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* For Safari/Chrome dropdown centering support */
+.user-select-dropdown option {
+  text-align: center;
+}
+
+/* Make the thumb look like a "cap" on the bar */
+.modern-slider.album-slider:-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0px;
+  height: 0px;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+
+/* The container for the number */
+#output-container {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+/* The little box itself */
+[id^="sliderValue-"] {
+  display: inline-block;
+  min-width: 40px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 6px;
+  background: #444; /* Initial color */
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.1s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+
+button[type="submit"] {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+
+
+
+.slider-val-box {
+  margin-top: 15px;
+  width: 50px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 15px auto;
+}
+
+.modal-slider-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+.open-rate-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #666;
+  padding: 5px 10px;
+  border-radius: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 1s;
+}
+
+
+/* Style for the slider specifically inside the modal */
+#modalSlider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 12px;
+  border-radius: 10px;
+  outline: none;
+
+  background: #222; 
+  transition:1s;
+}
+
+#modalSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: none;
+}
+
+
+#modalAlbumTitle {
+  color: #666 !important;
+  text-shadow: none !important; /* This removes the gold glow */
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align:center;
+  transition:1s;
+}
+
+#modalAlbumTitle:hover { color:#ffffff !important}
+
+.open-rate-btn:hover {
+  color: white;
+  border-color: gold;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+
+
+.score-point-graph {
+  position: relative;
+  width: 250px; /* Matches your slider width */
+  height: 40px;
+  margin: 10px auto 20px auto;
+  display: flex;
+  align-items: center;
+}
+
+/* The horizontal track line */
+.graph-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+.graph-dot-wrapper {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.graph-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* The initials below the dot */
+.dot-label {
+  font-size: 8px;
+  color: #666;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-weight: bold;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.3s ease;
+}
+
+/* White-to-Gold Interaction */
+.card.is-centered .dot-label {
+  color: #ffffff;
+  opacity: 0.6;
+}
+
+.graph-dot-wrapper:hover .dot-label {
+  opacity: 1 !important;
+  color: gold !important;
+  text-shadow: 0 0 5px gold;
+}
+
+.graph-dot-wrapper:hover .graph-dot {
+  transform: scale(1.5);
+  box-shadow: 0 0 10px currentColor;
+}
+
+
+
+.delete-btn {
+  position: absolute;
+  top: 2%;
+  right: 1%;
+  
+  /* Use fixed dimensions for a perfect circle */
+  width: 12px; 
+  height: 12px;
+  
+  /* Center the text using Flexbox */
+  display: flex;
+  align-items: center;     /* Vertical center */
+  justify-content: center;  /* Horizontal center */
+  
+   background: transparent;
+  border: none;
+  color: #666;
+  font-size: 15px;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: color 0.2s;}
+
+.delete-btn:hover {
+  color: #cc0000;
+  transform: scale(1.1);
+}
+
+
+
+.artandedit {
+display: flex;
+  flex-direction: column; 
+  align-items: center;  
+  gap: 5px;                             
+  margin-top:1%;
+  margin-left:1%
+}
+
+.edit-art-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.edit-art-btn:hover {
+  color: #ffffff; /* Glows green on hover */
+}
+
+
+.glow-sending {
+  color: white !important;
+  text-shadow: 0 0 10px #fffff, 0 0 20px #fffff;
+  letter-spacing: 2px; /* Makes it look fancy while sending */
+  transition: all 0.3s ease;
+}
+
+
+.graphandupdate {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:20pt;
+align-items:center;
+  width: 100%;
+ margin-right:20pt;
+}
+
+#modalUserSelect {
+  width: 85%;
+  background: #1a1a1a;
+  color: #666; /* Matching your title color */
+  border: 1px solid #333;
+  padding: 14px;
+  border-radius: 14px;
+  
+  /* Centering Logic */
+  text-align: center;
+  text-align-last: center; /* Centers text in Chrome/Safari */
+  
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  
+  /* Removes the default arrow */
+  appearance: none;
+  -webkit-appearance: none;
+  
+  outline: none;
+  cursor: pointer;
+  transition: all 1s ease;
+  margin-bottom: 20px;
+}
+
+/* Hover Effect */
+#modalUserSelect:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* Styling the options inside the list */
+#modalUserSelect option {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+}
+
+
+
+
+.dist-path {
+  fill-opacity: 0.5;
+  stroke-width: 1.5; /* Thicker line looks curvier */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* This makes the transition between cards feel like liquid */
+  transition: d 0.5s cubic-bezier(0.4, 0, 0.2, 1), all 0.4s ease;
+}
+
+.card.is-centered .distribution-container:hover .dist-path {
+  filter: saturate(1.4) drop-shadow(0 0 8px gold);
+  stroke-width: 1.5; /* Grow the line on hover */
+}
+/* When the card is centered: Bring out the full colors */
+.card.is-centered .dist-path {
+  stroke-opacity: 1;
+  fill-opacity: 0.3;
+  filter: saturate(2);
+}
+
+
+.distribution-container {
+  width: 100%;       /* Force the graph to span the card width */
+  max-width: 300px;  /* Or whatever your card's inner width is */
+  height: 120px;
+  cursor: pointer;
+}
+.dist-svg {
+  width: 100%;
+  height: 100%;
+  display: block; /* Prevents tiny bottom gaps */
+}
+
+/* When hovering specifically over the graph: Add the Gold Glow */
+.distribution-container:hover .dist-path {
+  filter: saturate(1.2) drop-shadow(0 0 2px gold);
+  stroke-width: 4;
+}
+
+
+
+
+.score-list-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.close-score-list {
+  position:absolute;
+  right:4%;
+  top:4%;
+  
+  background: transparent;
+  color:#ffffff;
+  border:none;
+}
+
+.close-score-list:hover {cursor:pointer;
+color:red}
+
+.score-list-modal {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 30px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 320px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.score-rows-container {
+   max-height: 350px; /* Limits the height */
+    overflow-y: auto;  /* Enables scrolling */
+    padding-right: 5px;
+    margin-top: 10px;
+  
+  display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.score-rows-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.score-rows-container::-webkit-scrollbar-thumb {
+    background: transparent; 
+
+}
+
+.score-popup-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.03);
+    padding: 12px 18px;
+    border-radius: 12px;
+ 
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.user-val {
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.click-hint {
+  margin-top:5pt;
+    width: 100%;
+    text-align: center;
+    font-size: 9px;
+    color: gold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: 0.3s ease;
+}
+
+.distribution-container:hover .click-hint {
+    opacity: 0.7;
+    bottom: 5px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+
+
+#userSearch {
+    width: 100%;
+    box-sizing: border-box; 
+    padding: 12px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 12px;
+    color: white;
+    font-size: 14px;
+    margin-top: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#userSearch:focus {
+    border-color: #ffffff;
+    background: #2a2a2a;
+  box-shadow: 0 0 3px gold
+}
+
+.modal-header {
+    width: 100%;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 10;
+  text-shadow: 0 0 2px gold
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+
+ 
+  .titleyears {flex-direction:column;
+  align-items:center}
+  body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  .card-content {
+    flex-direction: column; /* Stacks everything vertically */
+    text-align: center;
+  }
+  
+  .card img {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .bar-chart {
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column !important;
+    align-items: center;
+    text-align: center;
+  }
+
+    #averagesforall {
+margin-top:0px;
+    gap:10px;
+      margin-bottom:30px;
+}
+ 
+.aveCard {
+  padding: 8px 0px 8px 0px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 50px;
+  min-height:30pt;
+}
+  
+
+  
+  
+  
+  .aveNamesS {
+    margin:0; font-size:12px; opacity:0.8;
+  display: inline;
+    text-transform: uppercase; /* Makes 3 letters look like a cool badge */
+    font-weight: bold;}
+.aveNamesL{ display:none}
+  /* 1. Art stays at top */
+  .artandedit {
+    order: 1;
+  }
+
+  /* 2. Titles come second */
+  .titles {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;    /* Centers items horizontally */
+    justify-content: center !important; /* Centers items vertically */
+    text-align: center !important;      /* Centers the text lines */
+    width: 100% !important;             /* Takes full width to ensure true center */
+    margin: 10px 0 !important;          /* Clears desktop margins */
+    padding: 0 !important;
+    flex: none !important;              /* Prevents uneven stretching */
+  }
+
+  .comments {
+    flex:1;
+    margin-top:0pt;
+  
+   letter-spacing: 1px;}
+
+  .titles h3, .titles h4 {
+    text-align: center !important;
+    width: 100% !important;
+    margin: 5px 0 !important;
+    display: block !important;
+  }
+ 
+
+  /* 3. Average Score jumps here (Under Titles) */
+  .ave {
+    order: 3;
+    margin: 0 auto 20px auto !important; /* Centers it and adds space below */
+    flex: none !important;
+  }
+
+  /* 4. Chart goes to the bottom */
+  .chartupdate {
+    order: 4;
+    width: 100%;
+  }
+
+  .bar-chart {
+    margin: 0 auto !important;
+  }
+
+  .artandedit {
+    order: 1;
+  }
+
+.topofscreen {
+    position:relative;    /* Keep it sticky */
+    height: 80pt !important; /* Let it expand to fit stacked items */
+    padding: 10px 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+   border-bottom:none;
+    gap: 10px;
+  margin: 0 !important;
+    left: 0;
+    box-sizing: border-box;
+  }
+
+
+    
+ 
+  
+  .glow-text-btn {border:none;
+                margin-right:0px}
+  
+  h1 {
+    flex:1;
+    font-size: 28px !important; /* Shrink title so it doesn't wrap weirdly */
+    margin: 0 !important;
+    text-align: flex-start;
+    width: 100%;
+  }
+
+  
+  .titleyears {gap:10pt;
+  margin-left:5%;
+  align-items:center;}
+  /* 2025/2026 Buttons */
+  .page-nav {
+    flex:1;
+    position: static !important; /* Stop floating at top:53pt */
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 0px 0px;
+  }
+
+  .nav-btn {
+    font-size: 18px !important;
+  }
+
+  /* Sort/Filter Controls */
+  .filter-controls {
+    width: 75pt;
+    position: static !important; /* Stop floating at bottom:2pt */
+    justify-content: center;
+  }
+
+  /* The Add Album Form (Top Right on Desktop) */
+  .form-section {
+    position: static !important;
+    width: 95% !important;      /* Give it some breathing room on the edges */
+    margin: 10px auto !important; /* The 'auto' left/right centers the block */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;   /* Centers contents inside */
+    background: transparent;
+    padding: 0;
+    border-radius: 15px;
+  }
+
+  /* 2. Center the form itself */
+  .horizontal-form {
+    width: 100%;
+    display: flex !important;
+    flex-direction: column !important; /* Stack inputs */
+    align-items: center !important;    /* Center inputs horizontally */
+    gap: 6px !important;
+  }
+
+  /* Adjust the spacing for the cards so they don't hide under the new header */
+
+.horizontal-form input[type="text"],
+  .horizontal-form select,
+  .horizontal-form input[type="number"] {
+    width: 90% !important;
+    height: 35px; /* Bigger tap targets for fingers */
+  }
+  
+  #submitBtn {
+    width: 100%;
+    padding: 12px;
+  }
+
+#cardContainer {
+    width: 100% !important;
+    padding: 0 !important;
+    margin-top: 0 auto !important;
+    align-items: center; /* This is the key centering command */
+  }
+  
+  .formcardbtn {        width: max-content;
+}
+
+
+  .delete-btn {top:2%}
+  .formcardbtn {padding-right:0}
+
+  .display-section {
+    width: 100%;
+    margin-top: 90px !important; /* Adjusted for relative header */
+    padding: 0 !important;
+    align-items: center;
+  }
+  .statsandsearch {margin-top:30pt;
+  width:100%}
+  
+  .truetopofscreen {
+        height: 100pt;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0 0 0 0;
+    width:100%;
+    }
+  
+  
+ .topofscreen {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        justify-content: flex-end;
+        align-items: flex-start;
+    }
+
+  
+.newusersubmitbtn {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: flex-end;
+        margin-bottom: 50pt;
+  margin-right:1%;
+  gap:8pt
+    }
+  
+  .activity-btn { width:50%;} 
+  .refsortact {
+    min-width:100%;
+    flex-direction:column;
+  align-items:center;}
+  
+  .search-container {
+  justify-content:start;
+    margin: 10px 10pt;
+    display: flex;
+}
+  
+  
+  .filter-label {} 
+ 
+  #albumSearch {width:19%;
+  padding:5pt 10pt;}
+  
+  
+  .sort-dropdown {}
+  
+  .sortrefresh {        width: 100%;
+        flex-direction: row;
+        align-items: center;
+    justify-content: flex-start;
+  gap:100%}
+  
+    .statsbtnarea {
+        display: flex;
+        justify-content: flex-end;
+        margin-right: 10pt;
+    }
+  
+  
+  .datalist {appearence:none;}
+  
+  .newuserbtn {
+        width: max-content;
+        text-align: end;
+        align-items: flex-end;
+        padding:inherit;
+    }
+}}
