@@ -176,7 +176,9 @@ async function renderAves(data, logData) {
   const avesContainer = document.getElementById('averagesforall');
   const graphWrapper = document.getElementById('masterGraphWrapper');
   const recentList = document.getElementById('recentUpdatesList');
+ const totalAlbumsDiv = document.getElementById('totalalbums');
 
+  
   if (!avesContainer || !graphWrapper || data.length === 0) return;
 
   // Reset containers
@@ -184,6 +186,17 @@ async function renderAves(data, logData) {
   graphWrapper.innerHTML = "";
   if (recentList) recentList.innerHTML = "<p style='color: #666; font-size: 11px;'>Checking history...</p>";
 
+   
+  if (totalAlbumsDiv) {
+      totalAlbumsDiv.innerHTML = `<p style="color: #aaa; font-size: 14px; margin: -10px 0 20px 0;">
+          Total Albums: <strong style="color: gold;">${data.length}</strong>
+      </p>`;
+  }
+
+
+
+
+  
   const { mean, stdDev } = getGlobalStats(data);
   const currentHeaders = Object.keys(data[0] || {});
   const currentRaters = currentHeaders.slice(7); 
