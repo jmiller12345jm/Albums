@@ -363,7 +363,7 @@ const logHeaders = Object.keys(logData[0]); // These are your "Paddy" or "Timest
     aveCard.className = 'aveCard';
     aveCard.style.background = color;
     aveCard.style.cursor = 'pointer';
-    aveCard.onclick = () => showUserDetail(userName, mean, stdDev, aveScorepres, count);
+    aveCard.onclick = () => showUserDetail(key, mean, stdDev, aveScorepres, count);
     aveCard.innerHTML = `
       <p class="aveNamesL">${key.substring(0,8)}</p>
       <p class="aveNamesS">${key.substring(0,3)}</p>
