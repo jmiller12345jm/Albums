@@ -363,7 +363,7 @@ const logHeaders = Object.keys(logData[0]); // These are your "Paddy" or "Timest
     aveCard.className = 'aveCard';
     aveCard.style.background = color;
     aveCard.style.cursor = 'pointer';
-    aveCard.onclick = () => showUserDetail(key, mean, stdDev);
+    aveCard.onclick = () => showUserDetail(userName, mean, stdDev, aveScorepres, count);
     aveCard.innerHTML = `
       <p class="aveNamesL">${key.substring(0,8)}</p>
       <p class="aveNamesS">${key.substring(0,3)}</p>
@@ -1282,17 +1282,20 @@ document.getElementById('sortSelect').addEventListener('blur', function(e) {
 });
 
 
-function showUserDetail(userName, mean, stdDev) {
+function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
     const details = globalData
-        .filter(a => a[userName] !== undefined && a[userName] !== "" && a[userName] !== null)
+      .filter(a => {
+            const val = a[userName];
+            // Only include if the value is a number and greater than 0
+            return val !== undefined && val !== null && val !== "" && Number(val) > 0;
+        })
         .map(a => {
             let rawScore = parseFloat(a[userName]);
             
-            // Mirroring your math: Normalize to 100-point scale
+            // Normalize to 100-point scale for the graph/color
             let valForColor = rawScore;
             if (valForColor > 0 && valForColor <= 10) valForColor *= 10;
 
-            // Mirroring your zScore math
             const zScore = stdDev > 0 ? (valForColor - mean) / stdDev : 0;
             const colorValue = Math.max(0, Math.min(100, COLOR_ANCHOR + (zScore * COLOR_SENSITIVITY)));
             const scoreColor = getBarColor(colorValue);
@@ -1301,6 +1304,7 @@ function showUserDetail(userName, mean, stdDev) {
                 artist: a.Artist || "Unknown",
                 album: a.Album || "Unknown",
                 score: rawScore,
+                normalized: valForColor, // Added this back so the graph can find it!
                 bg: scoreColor
             };
         })
@@ -1308,57 +1312,124 @@ function showUserDetail(userName, mean, stdDev) {
 
     if (details.length === 0) return;
 
-    let listHtml = details.map(item => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #444;">
-            <div style="text-align: left; padding-right: 10px;">
-                <span style="font-weight: bold; display: block; color: #eee;">${item.album}</span>
-                <span style="font-size: 0.85em; color: #aaa;">${item.artist}</span>
-            </div>
-            <div style="
-                font-weight: bold; 
-                color: #fff; 
-                background: ${item.bg}; 
-                padding: 4px 6px; 
-                border-radius: 6px; 
-                min-width: 25px; 
-                text-align: center;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            ">
-                ${item.score}
-            </div>
-        </div>
-    `).join('');
+    // 1. Generate Gradient Stops
+    const stops = [0, 20, 40, 60, 75, 85, 95, 100].map(pct => {
+        const stopZ = stdDev > 0 ? (pct - mean) / stdDev : 0;
+        const stopColorVal = Math.max(0, Math.min(100, COLOR_ANCHOR + (stopZ * COLOR_SENSITIVITY)));
+        let color = getBarColor(stopColorVal);
+        if (color.includes('linear-gradient')) color = "#bc13fe";
+        return `<stop offset="${pct}%" stop-color="${color}" />`;
+    }).join('');
 
-    showGenericModal(`${userName}'s Ratings`, listHtml);
+    // 2. Generate Graph Buckets
+    const resolution = 30;
+    const userBuckets = new Array(resolution).fill(0);
+    details.forEach(d => {
+        const bIndex = Math.min(Math.floor(d.normalized / (100 / resolution)), resolution - 1);
+        userBuckets[bIndex]++;
+    });
+
+    const maxCount = Math.max(...userBuckets, 1);
+    const gWidth = 400; 
+    const gHeight = 120;
+
+    const points = userBuckets.map((cnt, i) => ({
+        x: (i * (gWidth / (resolution - 1))),
+        y: gHeight - (cnt / maxCount * (gHeight - 20))
+    }));
+
+    const curvyPath = solveCurvyPath(points, gWidth, gHeight);
+  
+
+  const avescorez = stdDev > 0 ? (aveScorepres - mean) / stdDev : 0;
+  const avecolorscore = Math.max(0, Math.min(100, COLOR_ANCHOR + (avescorez * COLOR_SENSITIVITY)));
+  
+  const avescorecol = getBarColor(avecolorscore);
+
+    // 3. Build Content
+    const content = `
+    <div class="modal-flex-container">
+        
+        <div class="modal-column-left" style="flex: 1; padding: 30px; border-right: 0px solid #333; display: flex; flex-direction: column; justify-content: center; background: #111; gap:20pt">
+            <p style="color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;"></p>
+            <h1 style="color:${avescorecol} ; margin: 0 0 10px 0; font-size: 28px;">${aveScorepres}<span style="font-size: 12px; color: ; margin-left: 10px;">AVG</span></h1>
+            
+            <div style="width: 100%; background:transparent; padding: 10px; border-radius: 8px;">
+                <svg viewBox="0 0 ${gWidth} ${gHeight}" preserveAspectRatio="none" style="width:100%; height:${gHeight}px; display:block;">
+                    <defs>
+                        <linearGradient id="userPopGrad" x1="0%" y1="0%" x2="100%" y2="0%">${stops}</linearGradient>
+                    </defs>
+                    <path d="${curvyPath}" style="stroke: url(#userPopGrad); fill: url(#userPopGrad); fill-opacity: 0.1; stroke-width: 3;"></path>
+                </svg>
+            </div>
+            <p style="color: #444; font-size: 12px; margin-top: 15px; text-align: center; letter-spacing: 3px;">RATINGS</p>
+        </div>
+
+        <div style="flex: 1; padding: 20px; background: #151515; max-height: 60vh; overflow-y: auto; border-radius:20pt;">
+            <p style="color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">Ranked Albums (${count})</p>
+            ${details.map(item => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222;">
+                    <div style="text-align: left; overflow: hidden;">
+                        <div style="font-weight: bold; color: #eee; font-size: 0.9em; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${item.album}</div>
+                        <div style="font-size: 0.8em; color: #555;">${item.artist}</div>
+                    </div>
+                    <div style="background: ${item.bg}; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em; margin-left: 10px; min-width: 35px; text-align: center;">
+                        ${item.score}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    </div>
+    `;
+
+    showGenericModal(`${userName}'s Ratings`, content);
 }
 
 
 function showGenericModal(title, content) {
-  // Create overlay
   const overlay = document.createElement('div');
   overlay.id = "userStatsModal";
-  overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:0px;";
+  overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:10px;";
   
-  // Close if background clicked
+  // Add CSS for the "responsive-columns" class
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .modal-flex-container {
+      display: flex; 
+      flex-direction: row; 
+      width: 100%;
+    }
+    @media (max-width: 700px) {
+      .modal-flex-container {
+        flex-direction: column;
+      }
+      .modal-column-left {
+        border-right: none !important;
+        border-bottom: 1px solid #333;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
   overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
 
-  // Create content box
   const modal = document.createElement('div');
-  modal.style = "background:rgba(0, 0, 0, 0.65); width:100%; max-width:400px; max-height:80vh; border-radius:12px; display:flex; flex-direction:column; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow:hidden;";
+  modal.style = "background:#111; width:100%; max-width:900px; max-height:90vh; border-radius:16px; display:flex; flex-direction:column; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow:hidden; border: 1px solid #333;";
   
   modal.innerHTML = `
-    <div style="padding: 15px 20px; background: rgba(0, 0, 0, 0.85); border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-      <h6 style="margin: 0; font-size: 1.1em; color: #fff; text-align: center; width: 100%;">
-  ${title}
-</h6>
-      <button onclick="document.getElementById('userStatsModal').remove()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#aaa;"></button>
+    <div style="padding: 15px 20px; background: #111; border-bottom: 0px solid #333; display: flex; justify-content: space-between; align-items: center; position: relative;">
+      <h6 style="margin: 0; font-size: 1.1em; color: #fff; text-align: center; width: 100%; letter-spacing: 1px; text-transform: uppercase;">
+        ${title}
+      </h6>
+      <button onclick="document.getElementById('userStatsModal').remove()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#666; position: absolute; right: 20px;">&times;</button>
     </div>
-    <div style="padding: 0 20px; overflow-y: auto; flex-grow: 1;">
+    
+    <div style="overflow-y: auto; flex-grow: 1;">
       ${content}
     </div>
-    <div style="padding: 15px; text-align: center;">
-      <button onclick="document.getElementById('userStatsModal').remove()" style="width:100%; padding:10px; border:none; border-radius:6px; background:#222; color:white; font-weight:bold; cursor:pointer;">Close</button>
-    </div>
+
+    <div style="padding: 15px; text-align: center; background: #111; border-top: 0px solid #333;">
+     
   `;
 
   overlay.appendChild(modal);
