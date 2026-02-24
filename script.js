@@ -1389,7 +1389,7 @@ function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
 function showGenericModal(title, content) {
   const overlay = document.createElement('div');
   overlay.id = "userStatsModal";
-  overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:10px;";
+  overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:0px;";
   
   // Add CSS for the "responsive-columns" class
   const style = document.createElement('style');
