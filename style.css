@@ -812,14 +812,15 @@ flex: 1;                /* This pushes the text to take up all remaining space *
 }
 
 #albumSearch {
-    background: #1a1a1a;
+   background: rgba(255, 255, 255, 0.05);
     color: white;
     border: 1px solid #333;
-    padding: 10px 20px;
+    padding: 8px 12px;
     border-radius: 25px;
+    font-size: 13px;
     width: 100%;
     max-width: 400px;
-   min-width:30pt;
+  min-width:30pt;
     outline: none;
   text-align:center;
     transition: border-color 0.3s, box-shadow 0.3s;
@@ -830,7 +831,11 @@ flex: 1;                /* This pushes the text to take up all remaining space *
     box-shadow: 0 0 8px gold;
 }
 
+#albumSearch:hover {color:#ffffff;
+ border-color: #ffffff; ;
 
+  box-shadow: 0 0 8px gold;
+}
 
 
 
