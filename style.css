@@ -456,6 +456,9 @@ align-items:center;
   border:1pt solid gold;
 }
 
+.statsbtnarea {display: flex;
+  gap:10pt;
+}
 
 
 
