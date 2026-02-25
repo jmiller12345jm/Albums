@@ -9,6 +9,15 @@ body {
   height: auto;
 }
 
+
+#modalSlider, 
+input[type="range"] {
+    touch-action: none !important;
+    cursor: pointer;
+}
+
+
+
 /* When the JS changes display to flex, we enable clicks */
 .form-overlay[style*="display: flex"] {
   pointer-events: auto;
