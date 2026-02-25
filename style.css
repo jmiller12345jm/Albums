@@ -431,6 +431,9 @@ flex-direction:row;
 align-items:center;
 }
 
+
+.user-filter-wrapper {width:40pt}
+
 .activity-btn {
 
   display:flex;
