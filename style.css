@@ -455,10 +455,9 @@ align-items:center;
  }
 
 .activity-btn:hover {color:#ffffff;
-  transform: translateY(-1px);
-  border:2px #666;
-  text-shadow: 0 0 20px gold;
-  border:1pt solid gold;
+ border-color: #ffffff; ;
+
+  box-shadow: 0 0 8px gold;
 }
 
 .statsbtnarea {display: flex;
