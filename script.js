@@ -1554,109 +1554,141 @@ function getTasteMatches(targetUser) {
 }
 
 
+
+
 function showTasteComparison(userA, userB) {
     const shared = [];
     globalData.forEach(item => {
         const sA = Number(item[userA]);
         const sB = Number(item[userB]);
         if (sA > 0 && sB > 0) {
-            shared.push({ album: item.Album, sA, sB, diff: Math.abs(sA - sB) });
+            shared.push({ 
+                album: item.Album, 
+                artist: item.Artist || item.artist || "", 
+                sA, 
+                sB, 
+                diff: Math.abs(sA - sB) 
+            });
         }
     });
 
     const totalDiff = shared.reduce((sum, d) => sum + d.diff, 0);
     const avgDiff = (totalDiff / shared.length).toFixed(1);
     
-    const sortedByGap = [...shared].sort((a, b) => b.diff - a.diff);
-    const largestGaps = sortedByGap.slice(0, 3);
-    const smallestGaps = sortedByGap.slice(-3);
+    // 1. Sort by gap size to find the value-based thresholds
+    const sortedByGapSize = [...shared].sort((a, b) => b.diff - a.diff);
+    
+    // Determine thresholds for the "top 3" values (handles ties)
+    const topIdx = Math.min(2, sortedByGapSize.length - 1);
+    const botIdx = Math.max(0, sortedByGapSize.length - 3);
+    
+    const largestGapThreshold = sortedByGapSize.length > 0 ? sortedByGapSize[topIdx].diff : -1;
+    const smallestGapThreshold = sortedByGapSize.length > 0 ? sortedByGapSize[botIdx].diff : -1;
 
-    // SVG Internal Coordinates (Keep these fixed for math)
+    // 2. Sort for display: Most similar (smallest gap) at the top
+    const sortedBySimilarity = [...shared].sort((a, b) => a.diff - b.diff);
+
     const viewSize = 450; 
     const padding = 60;
-    const colorA = "#FFD700"; 
-    const colorB = "#2398e2"; 
+    const colorA = "#FFD700"; // Gold
+    const colorB = "#00E5FF"; // Electric Blue
     
-    const dots = shared.map(d => {
+    const dots = shared.map((d) => {
         const green = Math.max(0, 255 - (d.diff * 3));
         const red = Math.min(255, d.diff * 4);
         const dotColor = `rgb(${red}, ${green}, 60)`;
         const x = padding + (d.sA / 100) * (viewSize - padding * 2);
         const y = viewSize - (padding + (d.sB / 100) * (viewSize - padding * 2));
         
-        return `<circle cx="${x}" cy="${y}" r="7" fill="${dotColor}" fill-opacity="0.8" stroke="#fff" stroke-width="1.5">
-                    <title>${d.album}\nDiff: ${d.diff}</title>
-                </circle>`;
+        const cleanName = d.album.replace(/'/g, "\\'");
+        const cleanUserA = userA.replace(/'/g, "\\'");
+        const cleanUserB = userB.replace(/'/g, "\\'");
+        const shortArtist = d.artist ? (d.artist.length > 12 ? d.artist.substring(0, 10) + '..' : d.artist) : "";
+
+        return `
+            <g class="dot-group" onclick="updateCompInfo('${cleanName}', ${d.sA}, ${d.sB}, '${cleanUserA}', '${cleanUserB}')" style="cursor: pointer;">
+                <circle cx="${x}" cy="${y}" r="18" fill="transparent" />
+                <circle cx="${x}" cy="${y}" r="6" fill="${dotColor}" fill-opacity="0.8" stroke="#fff" stroke-width="1" />
+                <text x="${x + 8}" y="${y + 3}" fill="#666" font-size="8" font-family="sans-serif" style="pointer-events: none; user-select: none;">
+                    ${shortArtist}
+                </text>
+            </g>`;
     }).join('');
 
     const comparisonHtml = `
         <style>
             .comp-container { padding: 15px; text-align: center; background: #0d0d0d; color: white; border-radius: 20px; font-family: sans-serif; }
-            .comp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
-            .comp-title-group { text-align: left; flex: 1; min-width: 200px; }
-            .comp-stat-box { background: #1a1a1a; padding: 10px 15px; border-radius: 12px; border: 1px solid #333; min-width: 80px; }
-            .graph-wrapper { 
-                background: #000; border: 1px solid #222; border-radius: 12px; padding: 10px; 
-                margin-bottom: 20px; width: 100%; box-sizing: border-box; 
+            .active-info-box { 
+                background: #111; border: 1px solid #333; border-radius: 12px; 
+                margin-bottom: 15px; padding: 12px; min-height: 55px; display: flex; 
+                flex-direction: column; justify-content: center; align-items: center;
+                transition: all 0.3s ease;
             }
+            .graph-wrapper { background: #000; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 20px; }
             .responsive-svg { width: 100%; height: auto; max-width: 450px; display: block; margin: auto; }
+            .dot-group text { opacity: 0.5; transition: opacity 0.2s; }
+            .dot-group:hover text { opacity: 1; fill: #fff; }
             
-            /* Mobile adjustments */
             @media (max-width: 600px) {
-                .comp-header { flex-direction: column; text-align: center; }
-                .comp-title-group { text-align: center; }
-                .comp-stat-box { width: 100%; box-sizing: border-box; }
-                .responsive-svg { max-width: 100%; }
+                .comp-header { flex-direction: column; gap: 10px; margin-bottom: 15px; display: flex; }
             }
         </style>
 
         <div class="comp-container">
-            <div class="comp-header">
-                <div class="comp-title-group">
-                    <p style="color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Similarity</p>
-                    <h3 style="margin: 5px 0 0 0; font-weight: 300; font-size: 1.2rem;">
-                        <span style="color:${colorA}">${userA}</span> <span style="color:#333">vs</span> <span style="color:${colorB}">${userB}</span>
+            <div class="comp-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="text-align: left;">
+                    <p style="color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Compatibility Analysis</p>
+                    <h3 style="margin: 5px 0 0 0; font-weight: 300;">
+                        <span style="color:${colorA}">${userA}</span> <span style="color:#333">×</span> <span style="color:${colorB}">${userB}</span>
                     </h3>
                 </div>
-                <div class="comp-stat-box">
-                    <p style="color: #666; font-size: 9px; text-transform: uppercase; margin: 0;">Avg Gap</p>
-                    <p style="color: #eee; font-size: 18px; font-weight: bold; margin: 0;">${avgDiff}<span style="font-size: 10px; color: #444;"> PTS</span></p>
+                <div style="background: #1a1a1a; padding: 8px 12px; border-radius: 10px; border: 1px solid #333;">
+                    <p style="color: #666; font-size: 8px; text-transform: uppercase; margin: 0;">Avg Gap</p>
+                    <p style="color: #eee; font-size: 16px; font-weight: bold; margin: 0;">${avgDiff} <span style="font-size: 9px; color: #444;">PTS</span></p>
                 </div>
+            </div>
+
+            <div id="compActiveInfo" class="active-info-box">
+                <span style="color: #444; font-size: 11px; letter-spacing: 1px;">TAP A DOT TO SEE DETAILS</span>
             </div>
             
             <div class="graph-wrapper">
                 <svg viewBox="0 0 ${viewSize} ${viewSize}" class="responsive-svg">
                     <line x1="${padding}" y1="${viewSize-padding}" x2="${viewSize-padding}" y2="${padding}" stroke="#222" stroke-dasharray="10,5" />
-                    <text x="${viewSize/2}" y="${viewSize-10}" fill="${colorA}" font-size="14" font-weight="bold" text-anchor="middle">${userA.toUpperCase()}</text>
-                    <text x="25" y="${viewSize/2}" fill="${colorB}" font-size="14" font-weight="bold" text-anchor="middle" transform="rotate(-90 25,${viewSize/2})">${userB.toUpperCase()}</text>
+                    <text x="${viewSize/2}" y="${viewSize-10}" fill="${colorA}" font-size="14" font-weight="bold" text-anchor="middle" style="text-transform: uppercase;">${userA}</text>
+                    <text x="25" y="${viewSize/2}" fill="${colorB}" font-size="14" font-weight="bold" text-anchor="middle" transform="rotate(-90 25,${viewSize/2})" style="text-transform: uppercase;">${userB}</text>
                     ${dots}
                 </svg>
             </div>
             
             <div style="max-height: 250px; overflow-y: auto; background: #111; border-radius: 12px; border: 1px solid #1a1a1a;">
                 <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                    <thead style="position: sticky; top: 0; background: #111; z-index: 10;">
+                    <thead style="position: sticky; top: 0; background: #111; z-index: 5;">
                         <tr style="color: #444; font-size: 9px; text-transform: uppercase; border-bottom: 1px solid #222;">
-                            <th style="text-align: left; padding: 10px;">Album</th>
-                            <th style="text-align: center; padding: 10px; color:${colorA}">${userA.substring(0,3)}</th>
-                            <th style="text-align: center; padding: 10px; color:${colorB}">${userB.substring(0,3)}</th>
-                            <th style="text-align: right; padding: 10px;">Gap</th>
+                            <th style="padding: 10px; text-align: left;">Album</th>
+                            <th style="padding: 10px; color:${colorA}">${userA.substring(0,4)}</th>
+                            <th style="padding: 10px; color:${colorB}">${userB.substring(0,4)}</th>
+                            <th style="padding: 10px; text-align: right;">Gap</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${sortedByGap.map(d => {
-                            const isLarge = largestGaps.includes(d);
-                            const isSmall = smallestGaps.includes(d);
-                            const gapBg = isLarge ? 'rgba(255, 51, 51, 0.12)' : (isSmall ? 'rgba(0, 255, 136, 0.12)' : 'transparent');
-                            const gapColor = isLarge ? '#ff4b2b' : (isSmall ? '#00ff88' : '#666');
+                        ${sortedBySimilarity.map(d => {
+                            const isLarge = d.diff >= largestGapThreshold && largestGapThreshold !== -1;
+                            const isSmall = d.diff <= smallestGapThreshold && smallestGapThreshold !== -1;
+                            
+                            const finalIsLarge = isLarge && !isSmall;
+                            const finalIsSmall = isSmall;
+
+                            const gapBg = finalIsLarge ? 'rgba(255, 51, 51, 0.15)' : (finalIsSmall ? 'rgba(0, 255, 136, 0.15)' : 'transparent');
+                            const gapColor = finalIsLarge ? '#ff3333' : (finalIsSmall ? '#00ff88' : '#666');
                             
                             return `
                                 <tr style="border-bottom: 1px solid #1a1a1a; background: ${gapBg};">
-                                    <td style="padding: 10px; color: #eee; text-align: left; line-height: 1.2;">${d.album}</td>
-                                    <td style="text-align: center; color: ${colorA}; font-family: monospace;">${d.sA}</td>
-                                    <td style="text-align: center; color: ${colorB}; font-family: monospace;">${d.sB}</td>
-                                    <td style="text-align: right; padding: 10px; color: ${gapColor}; font-weight: bold;">
-                                        ${d.diff}
+                                    <td style="padding: 12px 10px; color: #eee; text-align: left; font-weight: 500;">${d.album}</td>
+                                    <td style="text-align: center; color: ${colorA}; font-family: monospace; font-weight: bold;">${d.sA}</td>
+                                    <td style="text-align: center; color: ${colorB}; font-family: monospace; font-weight: bold;">${d.sB}</td>
+                                    <td style="padding: 10px; text-align: right; color: ${gapColor}; font-weight: bold;">
+                                        ${finalIsLarge ? '▲ ' : (finalIsSmall ? '▼ ' : '')}${d.diff}
                                     </td>
                                 </tr>
                             `;
@@ -1669,3 +1701,25 @@ function showTasteComparison(userA, userB) {
 
     showGenericModal(`Comparison`, comparisonHtml);
 }
+
+// Global helper function to handle the tap
+window.updateCompInfo = function(albumName, sA, sB, userAName, userBName) {
+    const infoBox = document.getElementById('compActiveInfo');
+    if (!infoBox) return;
+
+    const diff = Math.abs(sA - sB);
+    // Dynamic color based on agreement
+    const statusColor = diff < 15 ? "#00ff88" : (diff > 40 ? "#ff3333" : "#333");
+    
+    infoBox.style.borderColor = statusColor;
+    infoBox.style.boxShadow = `inset 0 0 10px ${statusColor}11`;
+    
+    infoBox.innerHTML = `
+        <div style="color: #fff; font-weight: bold; font-size: 14px; margin-bottom: 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${albumName}</div>
+        <div style="font-size: 12px; letter-spacing: 0.5px;">
+            <span style="color:#FFD700">${userAName}: <b style="font-size:14px">${sA}</b></span> 
+            <span style="color:#444; margin: 0 10px;">•</span> 
+            <span style="color:#00E5FF">${userBName}: <b style="font-size:14px">${sB}</b></span>
+        </div>
+    `;
+};
