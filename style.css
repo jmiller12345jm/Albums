@@ -1266,13 +1266,14 @@ button[type="submit"]:disabled {
 #modalSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 28px;  /* Increased for easier grabbing */
-    height: 28px; /* Increased for easier grabbing */
-    background: #ffffff; /* MUST NOT BE TRANSPARENT to be draggable easily */
+    width: 40px;  /* Even larger hit-area for better mobile feel */
+    height: 40px; 
+    /* Use rgba with 0 alpha - it remains "touchable" but is 100% invisible */
+    background: rgba(255, 255, 255, 0); 
     border-radius: 50%;
     cursor: pointer;
-    border: 2px solid #bc13fe; /* Gives it a nice purple rim */
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border: none; /* Remove the purple rim */
+    box-shadow: none; /* Remove the shadow */
 }
 
 
