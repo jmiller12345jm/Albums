@@ -1290,6 +1290,7 @@ document.getElementById('sortSelect').addEventListener('blur', function(e) {
 });
 
 
+
 function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
     const details = globalData
       .filter(a => {
@@ -1354,34 +1355,56 @@ function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
   
   const avescorecol = getBarColor(avecolorscore);
 
+  
+  const { top3, nemesis } = getTasteMatches(userName);
+
+    // Helper to format the UI for a match row
+    const renderMatchRow = (m, labelColor = "#18ff36") => {
+        const percent = (((m.r + 1) / 2) * 100).toFixed(0);
+        return `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 8px; border: 1px solid #222;">
+                <span style="color: #eee; font-size: 13px; font-weight: 500;">${m.name}</span>
+                <span style="color: ${labelColor}; font-weight: bold; font-size: 12px;">${percent}% Match</span>
+            </div>
+        `;
+    };
+  
+  
     // 3. Build Content
-    const content = `
+  const content = `
     <div class="modal-flex-container">
-        
-        <div class="modal-column-left" style="flex: 1; padding: 30px; border-right: 0px solid #333; display: flex; flex-direction: column; justify-content: center; background: #111; gap:20pt">
+        <div class="modal-column-left" style="flex: 1; padding: 30px; border-right: 0px solid #333; background: #111;">
             <p style="color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;"></p>
-            <h1 style="color:${avescorecol} ; margin: 0 0 10px 0; font-size: 28px;">${aveScorepres}<span style="font-size: 12px; color: ; margin-left: 10px;">AVG</span></h1>
+            <h1 style="color:${avescorecol}; margin: 0 0 20px 0; font-size: 48px;">${aveScorepres}<span style="font-size: 18px; color: #444; margin-left: 10px;"></span></h1>
             
-            <div style="width: 100%; background:transparent; padding: 10px; border-radius: 8px;">
+            <div style="width: 100%; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 30px;">
                 <svg viewBox="0 0 ${gWidth} ${gHeight}" preserveAspectRatio="none" style="width:100%; height:${gHeight}px; display:block;">
-                    <defs>
-                        <linearGradient id="userPopGrad" x1="0%" y1="0%" x2="100%" y2="0%">${stops}</linearGradient>
-                    </defs>
+                    <defs><linearGradient id="userPopGrad" x1="0%" y1="0%" x2="100%" y2="0%">${stops}</linearGradient></defs>
                     <path d="${curvyPath}" style="stroke: url(#userPopGrad); fill: url(#userPopGrad); fill-opacity: 0.1; stroke-width: 3;"></path>
                 </svg>
+                <p style="color: #444; font-size: 10px; margin-top: 10px; text-align: center; letter-spacing: 3px;">Rating Distribution</p>
             </div>
-            <p style="color: #444; font-size: 12px; margin-top: 15px; text-align: center; letter-spacing: 3px;">RATINGS</p>
+
+            <div style="margin-top: 20px;">
+                <p style="color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px;">Most similar users</p>
+                ${top3.length > 0 ? top3.map(m => renderMatchRow(m)).join('') : '<p style="color:#444; font-size:12px;">Not enough shared data.</p>'}
+                
+                ${nemesis ? `
+                    <p style="color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 12px 0;">Least similar user</p>
+                    ${renderMatchRow(nemesis, "#ff4b2b")}
+                ` : ''}
+            </div>
         </div>
 
-        <div style="flex: 1; padding: 20px; background: #151515; max-height: 60vh; overflow-y: auto; border-radius:20pt;">
+        <div style="flex: 1; padding: 20px; background: #151515; max-height: 80vh; overflow-y: auto; border-radius:20pt;">
             <p style="color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">Ranked Albums (${count})</p>
             ${details.map(item => `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222;">
-                    <div style="text-align: left; overflow: hidden;">
-                        <div style="font-weight: bold; color: #eee; font-size: 0.9em; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${item.album}</div>
+                    <div style="text-align: left;">
+                        <div style="font-weight: bold; color: #eee; font-size: 0.9em;">${item.album}</div>
                         <div style="font-size: 0.8em; color: #555;">${item.artist}</div>
                     </div>
-                    <div style="background: ${item.bg}; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em; margin-left: 10px; min-width: 35px; text-align: center;">
+                    <div style="background: ${item.bg}; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em; min-width: 35px; text-align: center;">
                         ${item.score}
                     </div>
                 </div>
@@ -1477,3 +1500,48 @@ function handleUserFilter(val) {
         showUserDetail(userName, mean, stdDev, aveScorepres, count);
     }
 }
+
+function getTasteMatches(targetUser) {
+    const scores = [];
+
+    ratingKeys.forEach(otherUser => {
+        if (otherUser === targetUser) return;
+
+        let sharedA = [], sharedB = [];
+        globalData.forEach(album => {
+            const sA = Number(album[targetUser]);
+            const sB = Number(album[otherUser]);
+            if (sA > 0 && sB > 0) {
+                sharedA.push(sA);
+                sharedB.push(sB);
+            }
+        });
+
+        const n = sharedA.length;
+        if (n < 3) return; // Need a minimum overlap to be relevant
+
+        const muA = sharedA.reduce((a, b) => a + b, 0) / n;
+        const muB = sharedB.reduce((a, b) => a + b, 0) / n;
+
+        let num = 0, denA = 0, denB = 0;
+        for (let i = 0; i < n; i++) {
+            const diffA = sharedA[i] - muA;
+            const diffB = sharedB[i] - muB;
+            num += (diffA * diffB);
+            denA += diffA ** 2;
+            denB += diffB ** 2;
+        }
+
+        const r = (denA && denB) ? num / Math.sqrt(denA * denB) : 0;
+        scores.push({ name: otherUser, r: r, overlap: n });
+    });
+
+    // Sort by correlation descending
+    const sorted = scores.sort((a, b) => b.r - a.r);
+    
+    return {
+        top3: sorted.slice(0, 3),
+        nemesis: sorted.length > 3 ? sorted[sorted.length - 1] : null
+    };
+}
+
