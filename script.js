@@ -201,6 +201,14 @@ async function renderAves(data, logData) {
   const currentHeaders = Object.keys(data[0] || {});
   const currentRaters = currentHeaders.slice(7); 
 
+
+  const userList = document.getElementById('userList');
+if (userList && currentRaters) {
+    userList.innerHTML = currentRaters
+        .map(name => `<option value="${name}">`)
+        .join('');
+}
+
   // --- 1. BUILD THE GLOBAL GRAPH (Untouched) ---
   let allRatings = [];
   data.forEach(item => {
