@@ -447,7 +447,7 @@ align-items:center;
   transition:1s;
   text-transform:uppercase;
   margin-top:0pt;
-  width:10%;
+  width:20pt;
   min-width:25pt;
  }
 
@@ -1916,7 +1916,8 @@ margin-top:0px;
   gap:8pt
     }
   
-  .activity-btn { width:50%;} 
+  .activity-btn { width: 20pt;
+        margin-right: 10pt;} 
   .refsortact {
     min-width:100%;
     flex-direction:column;
