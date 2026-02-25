@@ -1637,7 +1637,7 @@ function showTasteComparison(userA, userB) {
         <div class="comp-container">
             <div class="comp-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <div style="text-align: left;">
-                    <p style="color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Compatibility Analysis</p>
+                    <p style="color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Similarity</p>
                     <h3 style="margin: 5px 0 0 0; font-weight: 300;">
                         <span style="color:${colorA}">${userA}</span> <span style="color:#333">×</span> <span style="color:${colorB}">${userB}</span>
                     </h3>
