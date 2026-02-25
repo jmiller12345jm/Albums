@@ -456,6 +456,40 @@ align-items:center;
   border:1pt solid gold;
 }
 
+
+
+
+.user-dropdown-input {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid #333;
+    padding: 8px 12px;
+    border-radius: 25px;
+    font-size: 13px;
+    width: 40%;
+  min-width:30pt;
+    outline: none;
+    transition: border-color 0.3s;
+  text-align:center;
+}
+
+.user-dropdown-input:focus {
+    border-color: #ffffff; /* Your theme purple */
+    background: rgba(255, 255, 255, 0.1);box-shadow: 0 0 8px gold;
+}
+
+.user-dropdown-input:hover {color:#ffffff;
+ border-color: #ffffff; ;
+
+  box-shadow: 0 0 8px gold;
+}
+
+/* Removes the default arrow in some browsers if you want a cleaner look */
+.user-dropdown-input::-webkit-calendar-picker-indicator {
+    display: none !important;
+}
+
+
 .sortrefresh {
   gap:10pt;
   margin-bottom:0pt;
