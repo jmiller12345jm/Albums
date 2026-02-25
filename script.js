@@ -978,6 +978,13 @@ function openRatingModal(rowNumber, albumName, cardIndex) {
   const saveBtn = document.getElementById('modalSaveBtn');
   const slider = document.getElementById('modalSlider');
   const output = document.getElementById('modalSliderValue');
+
+
+    slider.style.touchAction = 'none';
+
+  slider.addEventListener('touchstart', (e) => {
+      // This prevents the "tap-to-scroll" delay on some mobile devices
+  }, { passive: false });
   
   albumTitle.innerText = albumName;
 
