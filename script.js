@@ -1575,7 +1575,7 @@ function showTasteComparison(userA, userB) {
     const viewSize = 450; 
     const padding = 60;
     const colorA = "#FFD700"; 
-    const colorB = "#00E5FF"; 
+    const colorB = "#2398e2"; 
     
     const dots = shared.map(d => {
         const green = Math.max(0, 255 - (d.diff * 3));
@@ -1613,7 +1613,7 @@ function showTasteComparison(userA, userB) {
         <div class="comp-container">
             <div class="comp-header">
                 <div class="comp-title-group">
-                    <p style="color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Statistical Alignment</p>
+                    <p style="color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin: 0;">Similarity</p>
                     <h3 style="margin: 5px 0 0 0; font-weight: 300; font-size: 1.2rem;">
                         <span style="color:${colorA}">${userA}</span> <span style="color:#333">vs</span> <span style="color:${colorB}">${userB}</span>
                     </h3>
