@@ -1435,3 +1435,37 @@ function showGenericModal(title, content) {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 }
+
+
+function handleUserFilter(val) {
+    // Ensure this matches the variable name in your init()
+    if (ratingKeys.includes(val)) {
+        const userName = val;
+        
+        let total = 0;
+        let count = 0;
+
+        // 1. Calculate user-specific average
+        globalData.forEach(item => {
+            let score = Number(item[userName]);
+            if (score > 0) {
+                let colorVal = score <= 10 ? score * 10 : score;
+                total += colorVal;
+                count++;
+            }
+        });
+
+        const aveScorepres = count > 0 ? Math.round(total / count) : 0;
+
+        // 2. Get Global Stats from the globalData you stored in init
+        const { mean, stdDev } = getGlobalStats(globalData);
+        
+        // 3. UI Cleanup
+        const input = document.getElementById('userJumpInput');
+        input.value = "";
+        input.blur(); 
+
+        // 4. Trigger the Modal
+        showUserDetail(userName, mean, stdDev, aveScorepres, count);
+    }
+}
