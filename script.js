@@ -333,7 +333,7 @@ const logHeaders = Object.keys(logData[0]); // These are your "Paddy" or "Timest
   }
   
   // --- 3. RENDER THE TOP 3 ---
- const topUpdates = activity.sort((a, b) => b.time - a.time).slice(0, 5);
+ const topUpdates = activity.sort((a, b) => b.time - a.time).slice(0, 10);
 
   if (recentList) {
     recentList.innerHTML = topUpdates.length ? "" : "<p style='color: #666; font-size: 11px;'>No recent updates.</p>";
@@ -352,13 +352,16 @@ const logHeaders = Object.keys(logData[0]); // These are your "Paddy" or "Timest
   }
   // --- 3. RENDER THE INDIVIDUAL USER CARDS (Untouched) ---
   currentRaters.forEach(key => {
-    let count = 0, total = 0;
+    let count = 0, total = 0, choices = 0;
     data.forEach(item => {
       let val = Number(item[key]);
       if (val > 0) {
         if (val <= 10) val *= 10;
         total += val;
         count++;
+      }
+      if (item.Chooser === key) {
+        choices++;
       }
     });
 
@@ -369,19 +372,20 @@ const logHeaders = Object.keys(logData[0]); // These are your "Paddy" or "Timest
 
     const aveCard = document.createElement('div');
     aveCard.className = 'aveCard';
-    aveCard.style.background = color;
     aveCard.style.cursor = 'pointer';
-    aveCard.onclick = () => showUserDetail(key, mean, stdDev, aveScorepres, count);
+     aveCard.style.background =`#080808`
+    aveCard.style.border = `2px solid ${color}`;
+  aveCard.style.boxShadow = `0 0 10px ${color}33`;
+    aveCard.onclick = () => showUserDetail(key, mean, stdDev, aveScorepres, count, choices);
     aveCard.innerHTML = `
       <p class="aveNamesL">${key.substring(0,8)}</p>
       <p class="aveNamesS">${key.substring(0,3)}</p>
-      <p class="aveScores">${aveScorepres}</p>
-      <p class="aveCount">${count}</p>
+      <p class="aveScores" style="color:${color}">${aveScorepres}</p>
+      <p class="aveCount">${count} | ${choices}</p>
     `;
     avesContainer.appendChild(aveCard);
   });
 }
-
 
 
 function updateSliderStyle(el, val) {
