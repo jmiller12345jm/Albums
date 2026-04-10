@@ -1687,8 +1687,15 @@ color:red}
 
 
 @media (max-width: 768px) {
-
+.card {
+    margin: 10px auto !important;
+    padding: 10px !important;
+    max-height: 420pt; /* Forces a consistent, short height */
+    overflow: hidden;
+  }
  
+  
+  
   .titleyears {flex-direction:column;
   align-items:center}
   body {
@@ -1699,8 +1706,8 @@ color:red}
   }
  
   .card img {
-    width: 200px;
-    height: 200px;
+    width: 120px;
+    height: 120px;
   }
   
   .bar-chart {
@@ -1713,6 +1720,7 @@ color:red}
     flex-direction: column !important;
     align-items: center;
     text-align: center;
+    gap:3pt;
   }
 
     #averagesforall {
@@ -1729,7 +1737,7 @@ margin-top:0px;
   min-height:30pt;
 }
   
-
+  .comments {font-size:8pt }
   
   
   
@@ -1762,14 +1770,17 @@ margin-top:0px;
     width: 100% !important;
     margin: 5px 0 !important;
     display: block !important;
-    font-size:15pt;
+    font-size:12pt;
   }
  
-
+  .titles h4 {font-size:10pt;}
   /* 3. Average Score jumps here (Under Titles) */
   .ave {
-    margin: 0 auto 20px auto !important; /* Centers it and adds space below */
+    margin:  0pt 20pt 0 !important; /* Centers it and adds space below */
     flex: none !important;
+    width:50pt;
+    height:20pt;
+    border-radius:30pt;
   }
 
   /* 4. Chart goes to the bottom */
@@ -1779,25 +1790,14 @@ margin-top:0px;
 
 
 
-  .artandedit {
+  .artandedit {margin-top:0pt;
+    gap:1pt;
    
   }
 
-.topofscreen {
-    position:relative;    /* Keep it sticky */
-    height: 80pt !important; /* Let it expand to fit stacked items */
-    padding: 10px 0 !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-   border-bottom:none;
-    gap: 10px;
-  margin: 0 !important;
-    left: 0;
-    box-sizing: border-box;
-  }
+  .edit-releaseDate-btn {font-size:5pt;}
 
-
+  .edit-art-btn {font-size:5pt;}
     
  
   
@@ -1884,22 +1884,26 @@ margin-top:0px;
 }
 
 
-  .delete-btn {top:2%}
+  .delete-btn {
+    display:none;
+    top:2%}
   .formcardbtn {padding-right:0}
 
   .display-section {
     width: 100%;
-    margin-top: 90px !important; /* Adjusted for relative header */
+    margin-top: 0px !important; /* Adjusted for relative header */
     padding: 0 !important;
     align-items: center;
   }
-  .statsandsearch {margin-top:30pt;
+  .statsandsearch {margin-top:0pt;
   width:100%}
   
   .truetopofscreen {
+     position:relative; 
         height: 100pt;
         display: flex;
         flex-direction: row;
+    gap:0;
         justify-content: center;
         align-items: center;
         padding: 0 0 0 0;
@@ -1976,7 +1980,7 @@ margin-top:0px;
     flex-direction: column;
     gap: 0pt;
     align-items: center;
-    width: 100%;
+    width: 90%;
     margin-right:0pt;
     margin-bottom:10pt;
 }
@@ -1985,7 +1989,7 @@ margin-top:0px;
  {
     width: 100%;
     max-width: 350px;
-    height: 162px;
+    height: 132px;
    margin-bottom:15pt;
     cursor: pointer;
 }
