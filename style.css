@@ -1944,11 +1944,10 @@ margin-top:0px;
     padding: 0 !important;
     align-items: center;
   }
-  .statsandsearch {margin-top:0pt;
+    .statsandsearch {margin-top:100pt;
   width:100%}
   
-  .truetopofscreen {
-     position:relative; 
+  .truetopofscreen {  
         height: 100pt;
         display: flex;
         flex-direction: row;
