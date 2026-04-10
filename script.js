@@ -1302,7 +1302,7 @@ document.getElementById('sortSelect').addEventListener('blur', function(e) {
 
 
 
-function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
+function showUserDetail(userName, mean, stdDev, aveScorepres, count, choices) {
     const details = globalData
       .filter(a => {
             const val = a[userName];
@@ -1325,7 +1325,8 @@ function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
                 album: a.Album || "Unknown",
                 score: rawScore,
                 normalized: valForColor, // Added this back so the graph can find it!
-                bg: scoreColor
+                bg: scoreColor,
+                isChoice: a.Chooser === userName
             };
         })
         .sort((a, b) => b.score - a.score);
@@ -1388,15 +1389,61 @@ function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
     `;
 };
   
-  
+  // Calculate Predicted "To-Listen" List
+const toListen = globalData
+    .filter(a => {
+        const val = a[userName];
+        // Filter for albums NOT rated by this user
+        return val === undefined || val === null || val === "" || Number(val) === 0;
+    })
+    .map(a => {
+        // Find everyone else who rated this album
+        let weightedSum = 0;
+        let totalWeight = 0;
+        
+        // Use the similarity data from getTasteMatches (assuming it returns an array of all users)
+        // If you only have top3, we'll use those for the prediction
+        top3.forEach(m => {
+            const peerScore = Number(a[m.name]);
+            if (peerScore > 0) {
+                // Weight is the match percentage (closer to 1 = more influence)
+                const weight = Math.max(0.1, (m.r + 1) / 2); 
+                weightedSum += peerScore * weight;
+                totalWeight += weight;
+            }
+        });
+
+        const prediction = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : null;
+        
+        return {
+            artist: a.Artist || "Unknown",
+            album: a.Album || "Unknown",
+            prediction: prediction,
+            sortVal: prediction || 0
+        };
+    })
+    .filter(a => a.prediction !== null) // Only show if we have enough data to predict
+    .sort((a, b) => b.sortVal - a.sortVal)
+    .slice(0, 10); // Just show the top 10 recommendations
     // 3. Build Content
+ 
+  
   const content = `
-    <div class="modal-flex-container">
-        <div class="modal-column-left" style="flex: 1; padding: 30px; border-right: 0px solid #333; background: #111;">
-            <p style="color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;"></p>
-            <h1 style="color:${avescorecol}; margin: 0 0 20px 0; font-size: 48px;">${aveScorepres}<span style="font-size: 18px; color: #444; margin-left: 10px;"></span></h1>
+    <div class="modal-flex-container" style="display: flex; flex-direction: row; height: 70vh; overflow-y: hidden; align-items: stretch; border-radius: 20pt;">
+        
+        <div class="modal-column-left" style="flex: 1; 
+    padding: 30px; 
+    background: #111; 
+    border-right: 0px solid #222; 
+    overflow-y: auto; 
+    overflow-x: hidden; /* This kills the horizontal scroll */
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+    display: flex;
+    flex-direction: column;">
+            <h1 style="color:${avescorecol}; margin: 0 0 0px 0; font-size: 30px;">${aveScorepres}</h1>
             
-            <div style="width: 100%; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 30px;">
+            <div style="width: 100%; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px; margin-bottom: 30px;">
                 <svg viewBox="0 0 ${gWidth} ${gHeight}" preserveAspectRatio="none" style="width:100%; height:${gHeight}px; display:block;">
                     <defs><linearGradient id="userPopGrad" x1="0%" y1="0%" x2="100%" y2="0%">${stops}</linearGradient></defs>
                     <path d="${curvyPath}" style="stroke: url(#userPopGrad); fill: url(#userPopGrad); fill-opacity: 0.1; stroke-width: 3;"></path>
@@ -1404,7 +1451,7 @@ function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
                 <p style="color: #444; font-size: 10px; margin-top: 10px; text-align: center; letter-spacing: 3px;">Rating Distribution</p>
             </div>
 
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 0;">
                 <p style="color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px;">Most similar users</p>
                 ${top3.length > 0 ? top3.map(m => renderMatchRow(m)).join('') : '<p style="color:#444; font-size:12px;">Not enough shared data.</p>'}
                 
@@ -1413,14 +1460,21 @@ function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
                     ${renderMatchRow(nemesis, "#ff4b2b")}
                 ` : ''}
             </div>
+            
+            <div style="height: 20px;"></div>
         </div>
 
-        <div style="flex: 1; padding: 20px; background: #151515; max-height: 80vh; overflow-y: auto; border-radius:20pt;">
-            <p style="color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">Ranked Albums (${count})</p>
+        <div class="modal-column-right" style="flex: 1; padding: 20px; background: #151515; overflow-y: auto; border-radius: 20pt;">
+            <p style="color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">
+                Ranked (${count}) | Chosen (${choices})
+            </p>
+            
             ${details.map(item => `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222;">
                     <div style="text-align: left;">
-                        <div style="font-weight: bold; color: #eee; font-size: 0.9em;">${item.album}</div>
+                        <div style="font-weight: bold; color: #eee; font-size: 0.9em;">
+                            ${item.album} ${item.isChoice ? '<span style="color:gold; font-size:10px; margin-left:5px;">★</span>' : ''}
+                        </div>
                         <div style="font-size: 0.8em; color: #555;">${item.artist}</div>
                     </div>
                     <div style="background: ${item.bg}; color: #fff; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em; min-width: 35px; text-align: center;">
@@ -1428,9 +1482,28 @@ function showUserDetail(userName, mean, stdDev, aveScorepres, count) {
                     </div>
                 </div>
             `).join('')}
+
+            ${toListen.length > 0 ? `
+                <div style="margin-top: 40px; border-top: 2px dashed #333; padding-top: 20px;">
+                    <p style="color: #bc13fe; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; font-weight: bold;">
+                        Recommended for ${userName.split(' ')[0]}
+                    </p>
+                    ${toListen.map(item => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #222; opacity: 0.8;">
+                            <div style="text-align: left;">
+                                <div style="font-weight: bold; color: #ccc; font-size: 0.85em;">${item.album}</div>
+                                <div style="font-size: 0.75em; color: #444;">${item.artist}</div>
+                            </div>
+                            <div style="color: #bc13fe; font-weight: bold; font-size: 0.8em; text-align: right;">
+                                ${item.prediction}% Match
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : ''}
         </div>
     </div>
-    `;
+  `;
 
     showGenericModal(`${userName}'s Ratings`, content);
 }
