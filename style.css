@@ -1676,6 +1676,33 @@ color:red}
 
 
 
+.modal-flex-container {
+    display: flex;
+    flex-direction: row;
+    height: 80vh; /* Fixed viewport height */
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.modal-column-left, 
+.modal-column-right {
+    flex: 1;
+    height: 100%; /* Take up exactly 80vh */
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box; /* CRITICAL: Includes padding in height calculation */
+    padding-bottom: 40px !important; /* Adds a "buffer" so the last item isn't flush */
+}
+
+/* For browsers that hide scrollbars, ensure we can still see the end */
+.modal-column-left::after, 
+.modal-column-right::after {
+    content: "";
+    display: block;
+    height: 20px;
+    width: 100%;
+}
+
 
 
 
@@ -1693,7 +1720,29 @@ color:red}
     max-height: 420pt; /* Forces a consistent, short height */
     overflow: hidden;
   }
- 
+
+
+  .modal-flex-container {
+        flex-direction: column !important;
+        height: auto !important;      /* Let it be as tall as the content */
+        max-height: none !important;  /* Remove any ceilings */
+        overflow: visible !important; /* Don't try to scroll here */
+    }
+
+    .modal-column-left, 
+    .modal-column-right {
+        flex: none !important;
+        width: 100% !important;
+        height: auto !important;      /* Grow to fit content */
+        overflow: visible !important; /* Disable internal scrollbars */
+        padding-bottom: 20px !important;
+        display: block !important;    /* Ensure they stack properly */
+    }
+    
+    /* Optional: Ensure the right column (the list) doesn't feel squashed */
+    .modal-column-right {
+        border-radius: 0 0 20pt 20pt !important; /* Round the bottom instead of the side */
+    }
   
   
   .titleyears {flex-direction:column;
