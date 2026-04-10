@@ -151,7 +151,7 @@ flex-direction:row;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    height: 100px; /* Adjust based on where you want it sitting */
+    height: 500px; /* Adjust based on where you want it sitting */
     width: 100%;
 }
 
